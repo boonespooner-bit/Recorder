@@ -87,14 +87,19 @@ class LyricsTranscriber @Inject constructor(
                 if (!strings.isNullOrEmpty()) {
                     onFinalResult(strings[0])
                 }
+                // SpeechRecognizer stops after delivering final results; restart to continue
+                if (active) {
+                    mainHandler.post {
+                        if (active) startRecognizer(onPartialResult, onFinalResult)
+                    }
+                }
             }
 
             override fun onEndOfSpeech() {
+                // Restart is handled in onResults; guard here only covers early end-of-speech
                 if (active) {
                     mainHandler.post {
-                        if (active) {
-                            startRecognizer(onPartialResult, onFinalResult)
-                        }
+                        if (active) startRecognizer(onPartialResult, onFinalResult)
                     }
                 }
             }
@@ -102,9 +107,7 @@ class LyricsTranscriber @Inject constructor(
             override fun onError(error: Int) {
                 if (active) {
                     mainHandler.postDelayed({
-                        if (active) {
-                            startRecognizer(onPartialResult, onFinalResult)
-                        }
+                        if (active) startRecognizer(onPartialResult, onFinalResult)
                     }, 500)
                 }
             }

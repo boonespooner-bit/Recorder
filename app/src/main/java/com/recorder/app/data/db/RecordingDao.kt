@@ -15,6 +15,9 @@ interface RecordingDao {
     @Query("SELECT * FROM recordings ORDER BY createdAt DESC")
     fun getAllRecordings(): Flow<List<RecordingEntity>>
 
+    @Query("SELECT * FROM recordings ORDER BY createdAt DESC")
+    suspend fun getAllRecordingsSnapshot(): List<RecordingEntity>
+
     @Query("SELECT * FROM recordings WHERE id = :id")
     suspend fun getRecordingById(id: Long): RecordingEntity?
 

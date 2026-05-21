@@ -14,16 +14,16 @@ class ChordAnalyzer @Inject constructor(
 ) {
 
     companion object {
-        // 12-element binary chord templates indexed as [C, C#, D, D#, E, F, F#, G, G#, A, A#, B]
+        // 12-element binary templates indexed as [C, C#, D, D#, E, F, F#, G, G#, A, A#, B]
         private val BUILTIN_TEMPLATES: Map<String, FloatArray> = mapOf(
-            "G"  to floatArrayOf(0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 1f),
-            "C"  to floatArrayOf(1f, 0f, 0f, 0f, 1f, 0f, 0f, 1f, 0f, 0f, 0f, 0f),
-            "D"  to floatArrayOf(0f, 0f, 1f, 0f, 0f, 0f, 1f, 0f, 0f, 1f, 0f, 0f),
-            "A"  to floatArrayOf(0f, 1f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f),
-            "Am" to floatArrayOf(1f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 0f, 1f, 0f, 0f),
-            "Em" to floatArrayOf(0f, 0f, 0f, 0f, 1f, 0f, 0f, 1f, 0f, 0f, 0f, 1f),
-            "E"  to floatArrayOf(0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 1f, 0f, 0f, 1f),
-            "F"  to floatArrayOf(1f, 0f, 0f, 0f, 1f, 1f, 0f, 0f, 1f, 0f, 0f, 0f)
+            "G"  to floatArrayOf(0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 1f), // D(2), G(7), B(11)
+            "C"  to floatArrayOf(1f, 0f, 0f, 0f, 1f, 0f, 0f, 1f, 0f, 0f, 0f, 0f), // C(0), E(4), G(7)
+            "D"  to floatArrayOf(0f, 0f, 1f, 0f, 0f, 0f, 1f, 0f, 0f, 1f, 0f, 0f), // D(2), F#(6), A(9)
+            "A"  to floatArrayOf(0f, 1f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f), // C#(1), E(4), A(9)
+            "Am" to floatArrayOf(1f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f), // C(0), E(4), A(9)
+            "Em" to floatArrayOf(0f, 0f, 0f, 0f, 1f, 0f, 0f, 1f, 0f, 0f, 0f, 1f), // E(4), G(7), B(11)
+            "E"  to floatArrayOf(0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 1f, 0f, 0f, 1f), // E(4), G#(8), B(11)
+            "F"  to floatArrayOf(1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 1f, 0f, 0f)  // C(0), F(5), A(9)
         )
     }
 
@@ -40,7 +40,6 @@ class ChordAnalyzer @Inject constructor(
             BUILTIN_TEMPLATES
         }
 
-        // Assign best chord for each frame
         val frameChords = chromagram.mapIndexed { frameIndex, chroma ->
             var bestChord = ""
             var bestSim = Float.NEGATIVE_INFINITY
@@ -56,7 +55,7 @@ class ChordAnalyzer @Inject constructor(
             Triple(bestChord, startMs, endMs)
         }
 
-        // Merge consecutive identical chords
+        // Merge consecutive frames that share the same chord label
         val merged = mutableListOf<TimedChord>()
         for ((chord, startMs, endMs) in frameChords) {
             val last = merged.lastOrNull()
