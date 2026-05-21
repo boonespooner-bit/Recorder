@@ -1,0 +1,6 @@
+-keep class com.recorder.app.** { *; }
+-keep class com.google.api.** { *; }
+-keepattributes Signature
+-keepattributes *Annotation*
+-dontwarn org.apache.http.**
+-dontwarn com.google.api.client.extensions.android.**
